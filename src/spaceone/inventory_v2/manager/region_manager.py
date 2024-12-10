@@ -1,21 +1,19 @@
 import logging
-from typing import Tuple
+from typing import Tuple, Union
 
-from spaceone.core.model.mongo_model import QuerySet
 from spaceone.core.manager import BaseManager
-from spaceone.inventory_v2.lib.resource_manager import ResourceManager
-from spaceone.inventory_v2.model.region.region_model import Region
+from spaceone.core.model.mongo_model import QuerySet
+from spaceone.inventory_v2.model.region.database import Region
+
+__ALL__ = ["RegionManager"]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class RegionManager(BaseManager, ResourceManager):
-    resource_keys = ["region_id"]
-    query_method = "list_regions"
-
+class RegionManager(BaseManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.region_model: Region = self.locator.get_model("Region")
+        self.region_model = Region()
 
     def create_region(self, params: dict) -> Region:
         def _rollback(vo: Region):
@@ -24,7 +22,6 @@ class RegionManager(BaseManager, ResourceManager):
 
         region_vo: Region = self.region_model.create(params)
         self.transaction.add_rollback(_rollback, region_vo)
-
         return region_vo
 
     def update_region_by_vo(self, params: dict, region_vo: Region) -> Region:
@@ -41,11 +38,13 @@ class RegionManager(BaseManager, ResourceManager):
     def delete_region_by_vo(region_vo: Region) -> None:
         region_vo.delete()
 
-    def get_region(self, region_id: str, domain_id: str) -> Region:
+    def get_region(
+        self, region_id: str, domain_id: str, workspace_id: Union[str, None] = None
+    ) -> Region:
         conditions = {"region_id": region_id, "domain_id": domain_id}
 
-        # if workspace_id:
-        #     conditions.update({"workspace_id": workspace_id})
+        if workspace_id:
+            conditions.update({"workspace_id": workspace_id})
 
         return self.region_model.get(**conditions)
 

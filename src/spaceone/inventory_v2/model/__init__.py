@@ -1,6 +1,6 @@
 from spaceone.inventory_v2.model.asset.database import Asset
 from spaceone.inventory_v2.model.asset_type.database import AssetType
-from spaceone.inventory_v2.model.region.region_model import Region
+from spaceone.inventory_v2.model.region.database import Region
 from spaceone.inventory_v2.model.collector.database import Collector
 from spaceone.inventory_v2.model.collector_rule.database import CollectorRule
 from spaceone.inventory_v2.model.collection_state.database import CollectionState
