@@ -33,6 +33,7 @@ class CollectorRule(MongoModel):
     workspace_id = StringField(max_length=40)
     domain_id = StringField(max_length=40)
     created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     meta = {
         "updatable_fields": [
